@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PopularMovies</string>
+    <string name="api_key">bcba630f671bb7c2b7cee1dfea0072c3</string>
+    <string name="title_activity_movie_detail">MovieDetailActivity</string>
 </resources>
