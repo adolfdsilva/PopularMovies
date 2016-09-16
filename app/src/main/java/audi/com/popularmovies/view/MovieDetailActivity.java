@@ -1,32 +1,43 @@
 package audi.com.popularmovies.view;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import audi.com.popularmovies.R;
+import audi.com.popularmovies.model.Movie;
+import audi.com.popularmovies.utils.Constants;
 
-public class MovieDetailActivity extends AppCompatActivity {
+public class MovieDetailActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        setUpToolBar("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        populateUI();
     }
 
+    private void populateUI() {
+        Movie movie = getIntent().getParcelableExtra(Constants.MOVIE);
+
+        Picasso.with(this).load(Constants.BACKDROP_URL + movie.getBackdrop_path())
+                .into((ImageView) findViewById(R.id.ivBackDrop));
+        CollapsingToolbarLayout collapsingToolbar =
+                (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
+        collapsingToolbar.setTitle(movie.getOriginal_title());
+
+
+        //Set Title And Desc
+        ((TextView)findViewById(R.id.tvOrgTitle)).setText(movie.getOriginal_title());
+        ((TextView)findViewById(R.id.tvRelDate)).setText(movie.getRelease_date());
+        ((TextView)findViewById(R.id.tvRating)).setText(movie.getVote_average() + "/10");
+        ((TextView)findViewById(R.id.tvOverview)).setText(movie.getOverview());
+
+    }
 }

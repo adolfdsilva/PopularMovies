@@ -5,6 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,21 +28,45 @@ import audi.com.popularmovies.utils.Constants;
 public class MoviesActivity extends BaseActivity {
 
     private RecyclerView rvMovies;
+    private TextView tvTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
+        setUpToolBar("");
 
-        rvMovies = (RecyclerView) findViewById(R.id.rvMovieList);
-        rvMovies.setLayoutManager(new GridLayoutManager(rvMovies.getContext(), 2));
-        rvMovies.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.HORIZONTAL_LIST));
-        loadMovies();
+        init();
+        loadMovies(Constants.POP_MOVIES);
+
+
+        //set toggle button
+        ((Switch)toolbar.findViewById(R.id.swMovies)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                if (checked) {
+                    tvTitle.setText(getString(R.string.text_top_movies));
+                    loadMovies(Constants.TOP_MOVIES);
+                } else {
+                    tvTitle.setText(getString(R.string.text_pop_movies));
+                    loadMovies(Constants.POP_MOVIES);
+                }
+            }
+        });
 
     }
 
-    private void loadMovies() {
-        Uri uri = Uri.parse(Constants.POP_MOVIES)
+    private void init() {
+        rvMovies = (RecyclerView) findViewById(R.id.rvMovieList);
+        rvMovies.setLayoutManager(new GridLayoutManager(rvMovies.getContext(), 2));
+        rvMovies.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL_LIST));
+        tvTitle = (TextView) toolbar.findViewById(R.id.tvTitle);
+
+        tvTitle.setText(R.string.text_pop_movies);
+    }
+
+    private void loadMovies(String url) {
+        Uri uri = Uri.parse(url)
                 .buildUpon()
                 .appendQueryParameter("api_key", getString(R.string.api_key)).build();
 
@@ -55,7 +82,7 @@ public class MoviesActivity extends BaseActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Constants.debug("Json Response: " + error.networkResponse.statusCode);
+                Constants.debug("Json Response: " + error.getMessage());
             }
         });
         queue.add(request);
@@ -70,8 +97,8 @@ public class MoviesActivity extends BaseActivity {
             adapter.setOnItemClickListerner(new MoviesRecyclerAdapter.OnItemClick() {
                 @Override
                 public void onItemClick(Movie movie) {
-                    Intent intent = new Intent(getApplicationContext(),MovieDetailActivity.class);
-                    intent.putExtra("movie",movie);
+                    Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
+                    intent.putExtra(Constants.MOVIE, movie);
                     startActivity(intent);
                 }
             });

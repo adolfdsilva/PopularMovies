@@ -12,7 +12,8 @@ public class Constants {
 
     private static final String MOVIES = API_URL + "movie/";
     public static final String POP_MOVIES = MOVIES + "popular";
-    public static final String IMG_URL = "http://image.tmdb.org/t/p/" + "w185";
+    public static final String POSTER_URL = "http://image.tmdb.org/t/p/" + "w185";
+    public static final String BACKDROP_URL = "http://image.tmdb.org/t/p/" + "w500";
     public static final String TOP_MOVIES = MOVIES + "top_rated";
 
     public static final String TAG = "PopularMovies";
@@ -33,6 +34,9 @@ public class Constants {
     //Server Errors
     public static final String NO_MORE_RESULTS = "no results found";
 
+
+    //Intent Extras
+    public static final String MOVIE = "movie";
 
 
     public static void debug(String msg) {

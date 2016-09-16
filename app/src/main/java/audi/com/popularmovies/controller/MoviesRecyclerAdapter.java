@@ -56,7 +56,7 @@ public class MoviesRecyclerAdapter extends RecyclerView.Adapter<MoviesRecyclerAd
     @Override
     public void onBindViewHolder(MoviesViewHolder holder, int position) {
         Movie movie = movies.get(position);
-        Picasso.with(context).load(Constants.IMG_URL + movie.getPoster_path()).into(holder.ivCover);
+        Picasso.with(context).load(Constants.POSTER_URL + movie.getPoster_path()).into(holder.ivCover);
         holder.ivCover.setTag(movie);
 
     }
