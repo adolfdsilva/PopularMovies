@@ -32,7 +32,6 @@ public class MovieDetailActivity extends BaseActivity {
                 (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
         collapsingToolbar.setTitle(movie.getOriginal_title());
         collapsingToolbar.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
-        collapsingToolbar.setStatusBarScrimColor(getResources().getColor(android.R.color.transparent));
 
 
         //Set Title And Desc
