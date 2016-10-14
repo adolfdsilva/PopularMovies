@@ -12,7 +12,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import audi.com.popularmovies.R;
-import audi.com.popularmovies.model.Movie;
+import audi.com.popularmovies.model.database.greenbot.Movie;
 import audi.com.popularmovies.utils.Constants;
 
 /**

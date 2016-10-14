@@ -1,6 +1,9 @@
 package audi.com.popularmovies.model;
 
+
 import java.util.List;
+
+import audi.com.popularmovies.model.database.greenbot.Movie;
 
 /**
  * Created by Audi on 15/09/16.

@@ -37,6 +37,7 @@ public class Constants {
 
     //Intent Extras
     public static final String MOVIE = "movie";
+    public static final String DB_NAME = "MOVIES_DB";
 
 
     public static void debug(String msg) {

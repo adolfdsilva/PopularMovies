@@ -8,6 +8,7 @@
     tools:context="audi.com.popularmovies.view.MovieDetailActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="320dp"
         android:fitsSystemWindows="true"
@@ -39,6 +40,14 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fFav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@android:drawable/ic_media_play"
+        app:layout_anchor="@+id/appbar"
+        app:layout_anchorGravity="bottom|end" />
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -73,8 +82,11 @@
                 android:id="@+id/tvRating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true" />
+                android:layout_below="@+id/tvOrgTitle"
+                android:layout_marginLeft="32dp"
+                android:layout_marginStart="32dp"
+                android:layout_toEndOf="@+id/tvRelDate"
+                android:layout_toRightOf="@+id/tvRelDate" />
 
             <TextView
                 android:id="@+id/tvOverview"

@@ -21,19 +21,23 @@ import java.util.List;
 
 import audi.com.popularmovies.R;
 import audi.com.popularmovies.controller.MoviesRecyclerAdapter;
-import audi.com.popularmovies.model.Movie;
 import audi.com.popularmovies.model.MovieResponse;
+import audi.com.popularmovies.model.database.greenbot.Movie;
 import audi.com.popularmovies.utils.Constants;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MoviesActivity extends BaseActivity {
 
-    private RecyclerView rvMovies;
+    @BindView(R.id.rvMovieList)  RecyclerView rvMovies;
     private TextView tvTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
+        ButterKnife.bind(this);
+
         setUpToolBar("");
 
         init();
@@ -57,7 +61,6 @@ public class MoviesActivity extends BaseActivity {
     }
 
     private void init() {
-        rvMovies = (RecyclerView) findViewById(R.id.rvMovieList);
         rvMovies.setLayoutManager(new GridLayoutManager(rvMovies.getContext(), 2));
         rvMovies.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL_LIST));
         tvTitle = (TextView) toolbar.findViewById(R.id.tvTitle);
