@@ -12,7 +12,7 @@ import de.greenrobot.dao.internal.DaoConfig;
 /** 
  * DAO for table MOVIE.
 */
-public class MovieDao extends AbstractDao<Movie, Integer> {
+public class MovieDao extends AbstractDao<Movie, Long> {
 
     public static final String TABLENAME = "MOVIE";
 
@@ -21,7 +21,7 @@ public class MovieDao extends AbstractDao<Movie, Integer> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Id = new Property(0, Integer.class, "id", true, "ID");
+        public final static Property Id = new Property(0, Long.class, "id", true, "ID");
         public final static Property Adult = new Property(1, Boolean.class, "adult", false, "ADULT");
         public final static Property Poster_path = new Property(2, String.class, "poster_path", false, "POSTER_PATH");
         public final static Property Overview = new Property(3, String.class, "overview", false, "OVERVIEW");
@@ -75,7 +75,7 @@ public class MovieDao extends AbstractDao<Movie, Integer> {
     protected void bindValues(SQLiteStatement stmt, Movie entity) {
         stmt.clearBindings();
  
-        Integer id = entity.getId();
+        Long id = entity.getId();
         if (id != null) {
             stmt.bindLong(1, id);
         }
@@ -143,15 +143,15 @@ public class MovieDao extends AbstractDao<Movie, Integer> {
 
     /** @inheritdoc */
     @Override
-    public Integer readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 0) ? null : cursor.getInt(offset + 0);
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
     public Movie readEntity(Cursor cursor, int offset) {
         Movie entity = new Movie( //
-            cursor.isNull(offset + 0) ? null : cursor.getInt(offset + 0), // id
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getShort(offset + 1) != 0, // adult
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // poster_path
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // overview
@@ -171,7 +171,7 @@ public class MovieDao extends AbstractDao<Movie, Integer> {
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, Movie entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getInt(offset + 0));
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setAdult(cursor.isNull(offset + 1) ? null : cursor.getShort(offset + 1) != 0);
         entity.setPoster_path(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setOverview(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
@@ -188,13 +188,14 @@ public class MovieDao extends AbstractDao<Movie, Integer> {
     
     /** @inheritdoc */
     @Override
-    protected Integer updateKeyAfterInsert(Movie entity, long rowId) {
-        return entity.getId();
+    protected Long updateKeyAfterInsert(Movie entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
     
     /** @inheritdoc */
     @Override
-    public Integer getKey(Movie entity) {
+    public Long getKey(Movie entity) {
         if(entity != null) {
             return entity.getId();
         } else {

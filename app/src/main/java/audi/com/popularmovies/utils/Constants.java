@@ -10,7 +10,7 @@ public class Constants {
     private static final String DOMAIN = "http://api.themoviedb.org/";
     private static final String API_URL = DOMAIN + "3/";
 
-    private static final String MOVIES = API_URL + "movie/";
+    public static final String MOVIES = API_URL + "movie/";
     public static final String POP_MOVIES = MOVIES + "popular";
     public static final String POSTER_URL = "http://image.tmdb.org/t/p/" + "w185";
     public static final String BACKDROP_URL = "http://image.tmdb.org/t/p/" + "w500";

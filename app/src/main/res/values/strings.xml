@@ -8,4 +8,7 @@
     <string name="text_top_movies">Top Movies</string>
     <string name="favorites">Favorites</string>
     <string name="text_favorites">Favorites</string>
+    <string name="trailers">Trailers</string>
+    <string name="reviews">Reviews</string>
+    <string name="toast_no_link_to_trailer">Sorry Cannot Load Trailer</string>
 </resources>

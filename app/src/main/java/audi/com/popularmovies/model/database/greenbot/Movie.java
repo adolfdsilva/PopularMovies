@@ -13,9 +13,9 @@ import java.util.List;
 /**
  * Entity mapped to table MOVIE.
  */
-public class Movie implements Parcelable {
+public class Movie implements Parcelable{
 
-    private Integer id;
+    private Long id;
     private Boolean adult;
     private String poster_path;
     private String overview;
@@ -36,11 +36,11 @@ public class Movie implements Parcelable {
     public Movie() {
     }
 
-    public Movie(Integer id) {
+    public Movie(Long id) {
         this.id = id;
     }
 
-    public Movie(Integer id, Boolean adult, String poster_path, String overview, String release_date, String original_title, String original_language, String title, String backdrop_path, Double popularity, Double vote_average, Integer vote_count, Boolean video) {
+    public Movie(Long id, Boolean adult, String poster_path, String overview, String release_date, String original_title, String original_language, String title, String backdrop_path, Double popularity, Double vote_average, Integer vote_count, Boolean video) {
         this.id = id;
         this.adult = adult;
         this.poster_path = poster_path;
@@ -56,34 +56,11 @@ public class Movie implements Parcelable {
         this.video = video;
     }
 
-    protected Movie(Parcel in) {
-        poster_path = in.readString();
-        overview = in.readString();
-        release_date = in.readString();
-        original_title = in.readString();
-        original_language = in.readString();
-        title = in.readString();
-        backdrop_path = in.readString();
-        vote_average = in.readDouble();
-    }
-
-    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
-        @Override
-        public Movie createFromParcel(Parcel in) {
-            return new Movie(in);
-        }
-
-        @Override
-        public Movie[] newArray(int size) {
-            return new Movie[size];
-        }
-    };
-
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -183,8 +160,32 @@ public class Movie implements Parcelable {
         this.video = video;
     }
 
-
     // KEEP METHODS - put your custom methods here
+
+    protected Movie(Parcel in) {
+        id = in.readLong();
+        poster_path = in.readString();
+        overview = in.readString();
+        release_date = in.readString();
+        original_title = in.readString();
+        original_language = in.readString();
+        title = in.readString();
+        backdrop_path = in.readString();
+        vote_average = in.readDouble();
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+
     public List<Integer> getGenre_ids() {
         return genre_ids;
     }
@@ -200,6 +201,7 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(id);
         parcel.writeString(poster_path);
         parcel.writeString(overview);
         parcel.writeString(release_date);

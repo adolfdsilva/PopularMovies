@@ -61,13 +61,11 @@
 
             <TextView
                 android:id="@+id/tvOrgTitle"
+                style="@style/TextViewPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:textColor="@color/md_grey_900"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:layout_alignParentStart="true" />
 
 
             <TextView
@@ -83,8 +81,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvOrgTitle"
-                android:layout_marginLeft="32dp"
-                android:layout_marginStart="32dp"
+                android:layout_marginLeft="64dp"
+                android:layout_marginStart="64dp"
                 android:layout_toEndOf="@+id/tvRelDate"
                 android:layout_toRightOf="@+id/tvRelDate" />
 
@@ -95,10 +93,39 @@
                 android:layout_below="@+id/tvRelDate"
                 android:layout_marginTop="8dp" />
 
+            <TextView
+                android:id="@+id/tvTrailers"
+                style="@style/TextViewPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvOverview"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/trailers" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvTrailers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvTrailers" />
+
+            <TextView
+                android:id="@+id/tvReviews"
+                style="@style/TextViewPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rvTrailers"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/reviews" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvReviews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvReviews" />
+
         </RelativeLayout>
 
-
     </android.support.v4.widget.NestedScrollView>
-
-
 </android.support.design.widget.CoordinatorLayout>
