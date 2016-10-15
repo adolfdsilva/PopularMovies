@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -19,9 +21,11 @@ import com.google.gson.Gson;
 
 import java.util.List;
 
+import audi.com.popularmovies.MovieApplication;
 import audi.com.popularmovies.R;
 import audi.com.popularmovies.controller.MoviesRecyclerAdapter;
 import audi.com.popularmovies.model.MovieResponse;
+import audi.com.popularmovies.model.database.greenbot.DaoSession;
 import audi.com.popularmovies.model.database.greenbot.Movie;
 import audi.com.popularmovies.utils.Constants;
 import butterknife.BindView;
@@ -29,8 +33,10 @@ import butterknife.ButterKnife;
 
 public class MoviesActivity extends BaseActivity {
 
-    @BindView(R.id.rvMovieList)  RecyclerView rvMovies;
+    @BindView(R.id.rvMovieList)
+    RecyclerView rvMovies;
     private TextView tvTitle;
+    private MoviesRecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +51,7 @@ public class MoviesActivity extends BaseActivity {
 
 
         //set toggle button
-        ((Switch)toolbar.findViewById(R.id.swMovies)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        ((Switch) toolbar.findViewById(R.id.swMovies)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                 if (checked) {
@@ -60,12 +66,42 @@ public class MoviesActivity extends BaseActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.mainactivity, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.listFav) {
+            DaoSession daoSession = MovieApplication.getSession();
+            List<Movie> movies = daoSession.loadAll(Movie.class);
+            if (populateMovieList(movies))
+                tvTitle.setText(R.string.text_favorites);
+            return true;
+        }
+
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void init() {
         rvMovies.setLayoutManager(new GridLayoutManager(rvMovies.getContext(), 2));
         rvMovies.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL_LIST));
         tvTitle = (TextView) toolbar.findViewById(R.id.tvTitle);
-
         tvTitle.setText(R.string.text_pop_movies);
+        adapter = new MoviesRecyclerAdapter(this, null);
+        adapter.setOnItemClickListerner(new MoviesRecyclerAdapter.OnItemClick() {
+            @Override
+            public void onItemClick(Movie movie) {
+                Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
+                intent.putExtra(Constants.MOVIE, movie);
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void loadMovies(String url) {
@@ -79,7 +115,7 @@ public class MoviesActivity extends BaseActivity {
             public void onResponse(String response) {
                 Constants.debug("Json Response: " + response);
                 MovieResponse movieResponse = new Gson().fromJson(response, MovieResponse.class);
-                movieResponse(movieResponse.getResults());
+                populateMovieList(movieResponse.getResults());
 
             }
         }, new Response.ErrorListener() {
@@ -92,19 +128,13 @@ public class MoviesActivity extends BaseActivity {
     }
 
 
-    private void movieResponse(List<Movie> movies) {
+    private boolean populateMovieList(List<Movie> movies) {
         if (movies != null && movies.size() > 0) {
-            MoviesRecyclerAdapter adapter = new MoviesRecyclerAdapter(this, movies);
+            adapter.setMovies(movies);
+            adapter.notifyDataSetChanged();
             rvMovies.setAdapter(adapter);
-
-            adapter.setOnItemClickListerner(new MoviesRecyclerAdapter.OnItemClick() {
-                @Override
-                public void onItemClick(Movie movie) {
-                    Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
-                    intent.putExtra(Constants.MOVIE, movie);
-                    startActivity(intent);
-                }
-            });
+            return true;
         }
+        return false;
     }
 }

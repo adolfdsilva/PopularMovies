@@ -71,6 +71,9 @@ public class MoviesRecyclerAdapter extends RecyclerView.Adapter<MoviesRecyclerAd
         return movies.size();
     }
 
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
+    }
 
     public interface OnItemClick {
         void onItemClick(Movie movie);

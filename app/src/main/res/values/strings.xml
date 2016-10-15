@@ -6,4 +6,6 @@
     <!-- Text View Strings -->
     <string name="text_pop_movies">Popular Movies</string>
     <string name="text_top_movies">Top Movies</string>
+    <string name="favorites">Favorites</string>
+    <string name="text_favorites">Favorites</string>
 </resources>
