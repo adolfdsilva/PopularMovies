@@ -28,25 +28,29 @@ import audi.com.popularmovies.model.MovieResponse;
 import audi.com.popularmovies.model.database.greenbot.DaoSession;
 import audi.com.popularmovies.model.database.greenbot.Movie;
 import audi.com.popularmovies.utils.Constants;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
-public class MoviesActivity extends BaseActivity {
+public class MoviesActivity extends BaseActivity implements MovieListFragment.MovieListCallback {
 
-    @BindView(R.id.rvMovieList)
     RecyclerView rvMovies;
     private TextView tvTitle;
     private MoviesRecyclerAdapter adapter;
+    private boolean isTwoPlane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
-        ButterKnife.bind(this);
+        Constants.debug("MovieListActivity setContent Done");
 
         setUpToolBar("");
+        tvTitle = (TextView) toolbar.findViewById(R.id.tvTitle);
+        tvTitle.setText(R.string.text_pop_movies);
 
-        init();
+        if (findViewById(R.id.fMovieList) != null) {
+            isTwoPlane = true;
+        }
+        loadMovieAdapter();
+
         loadMovies(Constants.POP_MOVIES);
 
 
@@ -72,7 +76,6 @@ public class MoviesActivity extends BaseActivity {
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.listFav) {
@@ -87,18 +90,24 @@ public class MoviesActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void init() {
-        rvMovies.setLayoutManager(new GridLayoutManager(rvMovies.getContext(), 2));
+    private void loadMovieAdapter() {
+        if (!isTwoPlane)
+            rvMovies = (RecyclerView) findViewById(R.id.rvMovieList);
+        rvMovies.setLayoutManager(new GridLayoutManager(rvMovies.getContext(), isTwoPlane ? 3 : 2));
         rvMovies.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL_LIST));
-        tvTitle = (TextView) toolbar.findViewById(R.id.tvTitle);
-        tvTitle.setText(R.string.text_pop_movies);
         adapter = new MoviesRecyclerAdapter(this, null);
         adapter.setOnItemClickListerner(new MoviesRecyclerAdapter.OnItemClick() {
             @Override
             public void onItemClick(Movie movie) {
-                Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
-                intent.putExtra(Constants.MOVIE, movie);
-                startActivity(intent);
+                if (isTwoPlane) {
+                    MovieDetailFragment fragment = (MovieDetailFragment) getSupportFragmentManager()
+                            .findFragmentById(R.id.fMovieDetail);
+                    fragment.populateUI(movie);
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
+                    intent.putExtra(Constants.MOVIE, movie);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -136,5 +145,11 @@ public class MoviesActivity extends BaseActivity {
             return true;
         }
         return false;
+    }
+
+
+    @Override
+    public void onListBind(RecyclerView rvMovies) {
+        this.rvMovies = rvMovies;
     }
 }

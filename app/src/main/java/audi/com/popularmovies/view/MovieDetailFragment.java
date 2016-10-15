@@ -4,12 +4,14 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +27,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import audi.com.popularmovies.MovieApplication;
 import audi.com.popularmovies.R;
 import audi.com.popularmovies.controller.ReviewsRecyclerAdapter;
 import audi.com.popularmovies.controller.TrailersRecyclerAdapter;
@@ -36,9 +37,13 @@ import audi.com.popularmovies.utils.Constants;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MovieDetailActivity extends BaseActivity {
+/**
+ * Created by Audi on 15/10/16.
+ */
 
+public class MovieDetailFragment extends Fragment {
 
+    View rootView;
     @BindView(R.id.tvOrgTitle)
     TextView tvOrgTitle;
     @BindView(R.id.tvRelDate)
@@ -49,8 +54,6 @@ public class MovieDetailActivity extends BaseActivity {
     TextView tvOverview;
     @BindView(R.id.ivBackDrop)
     ImageView ivBackDrop;
-    @BindView(R.id.fFav)
-    FloatingActionButton fFavorites;
     @BindView(R.id.rvTrailers)
     RecyclerView rvTrailers;
     @BindView(R.id.rvReviews)
@@ -65,36 +68,25 @@ public class MovieDetailActivity extends BaseActivity {
     private ReviewsRecyclerAdapter reviewsRecyclerAdapter;
     private RequestQueue queue;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_detail);
-        ButterKnife.bind(this);
 
-        setUpToolBar("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.fragment_movies_detail, container, false);
+        ButterKnife.bind(this, rootView);
 
         init();
-        populateUI();
-        loadTrailers();
-        loadReviews();
 
-        fFavorites.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MovieApplication.getSession().insertOrReplace(movie);
-            }
-        });
-
+        return rootView;
     }
 
     private void init() {
-        queue = Volley.newRequestQueue(this);
+        queue = Volley.newRequestQueue(getActivity());
         //setup trailer and recycler views
         rvTrailers.setLayoutManager(new LinearLayoutManager(rvTrailers.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        rvTrailers.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL_LIST));
+        rvTrailers.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.HORIZONTAL_LIST));
         rvReviews.setLayoutManager(new LinearLayoutManager(rvTrailers.getContext(), LinearLayoutManager.VERTICAL, false));
-        rvReviews.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+        rvReviews.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
     }
 
     private void loadReviews() {
@@ -119,7 +111,6 @@ public class MovieDetailActivity extends BaseActivity {
         });
         queue.add(request);
     }
-
 
     private void loadTrailers() {
         Uri uri = Uri.parse(Constants.MOVIES)
@@ -149,7 +140,7 @@ public class MovieDetailActivity extends BaseActivity {
     private boolean populateTrailers(List<TrailerResponse.Trailer> trailers) {
         if (trailers != null && trailers.size() > 0) {
             tvTrailerText.setVisibility(View.VISIBLE);
-            trailersRecyclerAdapter = new TrailersRecyclerAdapter(this, trailers);
+            trailersRecyclerAdapter = new TrailersRecyclerAdapter(getActivity(), trailers);
             trailersRecyclerAdapter.notifyDataSetChanged();
             rvTrailers.setAdapter(trailersRecyclerAdapter);
             trailersRecyclerAdapter.setOnItemClickListerner(new TrailersRecyclerAdapter.OnItemClick() {
@@ -158,7 +149,7 @@ public class MovieDetailActivity extends BaseActivity {
                     if (!TextUtils.isEmpty(trailer.getKey()))
                         watchYoutubeVideo(trailer.getKey());
                     else
-                        Toast.makeText(getApplicationContext(), R.string.toast_no_link_to_trailer, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), R.string.toast_no_link_to_trailer, Toast.LENGTH_LONG).show();
                 }
             });
             return true;
@@ -169,7 +160,7 @@ public class MovieDetailActivity extends BaseActivity {
     private boolean populateReviews(List<ReviewsResponse.Review> reviews) {
         if (reviews != null && reviews.size() > 0) {
             tvReviewText.setVisibility(View.VISIBLE);
-            reviewsRecyclerAdapter = new ReviewsRecyclerAdapter(this, reviews);
+            reviewsRecyclerAdapter = new ReviewsRecyclerAdapter(getActivity(), reviews);
             reviewsRecyclerAdapter.notifyDataSetChanged();
             rvReviews.setAdapter(reviewsRecyclerAdapter);
             return true;
@@ -178,21 +169,20 @@ public class MovieDetailActivity extends BaseActivity {
 
     }
 
-    private void populateUI() {
-        movie = getIntent().getParcelableExtra(Constants.MOVIE);
-
-        Picasso.with(this).load(Constants.BACKDROP_URL + movie.getBackdrop_path())
+    public void populateUI(Movie movie) {
+        this.movie = movie;
+        Picasso.with(getActivity()).load(Constants.BACKDROP_URL + movie.getBackdrop_path())
                 .into(ivBackDrop);
-        CollapsingToolbarLayout collapsingToolbar =
-                (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
-        collapsingToolbar.setTitle(movie.getOriginal_title());
-        collapsingToolbar.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
 
         //Set Title And Desc
         tvOrgTitle.setText(movie.getOriginal_title());
         tvRelDate.setText(movie.getRelease_date());
         tvRating.setText(movie.getVote_average() + "/10");
         tvOverview.setText(movie.getOverview());
+
+        loadTrailers();
+        loadReviews();
+
     }
 
 
