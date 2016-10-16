@@ -11,4 +11,5 @@
     <string name="trailers">Trailers</string>
     <string name="reviews">Reviews</string>
     <string name="toast_no_link_to_trailer">Sorry Cannot Load Trailer</string>
+    <string name="toast_no_fav">You\'ve no favorites</string>
 </resources>

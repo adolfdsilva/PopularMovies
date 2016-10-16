@@ -19,7 +19,6 @@ public class Constants {
     public static final String TAG = "PopularMovies";
 
 
-
     //Volley Constants
     public static final int REQUEST_TIMEOUT = 60000;
     public static final float BACKOFF_MULT = 1;
@@ -38,6 +37,7 @@ public class Constants {
     //Intent Extras
     public static final String MOVIE = "movie";
     public static final String DB_NAME = "MOVIES_DB";
+    public static final String TWO_PLANE = "two_plane";
 
 
     public static void debug(String msg) {

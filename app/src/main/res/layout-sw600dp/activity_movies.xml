@@ -40,12 +40,12 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <fragment
+        <FrameLayout
             android:id="@+id/fMovieList"
-            class="audi.com.popularmovies.view.MovieListFragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@color/md_blue_grey_900"
             tools:layout="@layout/fragment_movies_list" />
 
         <FrameLayout

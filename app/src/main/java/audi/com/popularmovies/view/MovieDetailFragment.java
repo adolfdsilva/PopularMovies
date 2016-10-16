@@ -64,6 +64,7 @@ public class MovieDetailFragment extends Fragment {
     TextView tvTrailerText;
 
     Movie movie;
+    private boolean isTwoPlane;
     private TrailersRecyclerAdapter trailersRecyclerAdapter;
     private ReviewsRecyclerAdapter reviewsRecyclerAdapter;
     private RequestQueue queue;
@@ -76,13 +77,14 @@ public class MovieDetailFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         init();
-        populateUI(movie);
+        populateUI();
 
         return rootView;
     }
 
     private void init() {
         movie = getArguments().getParcelable(Constants.MOVIE);
+        isTwoPlane = getArguments().getBoolean(Constants.TWO_PLANE);
         queue = Volley.newRequestQueue(getActivity());
         //setup trailer and recycler views
         rvTrailers.setLayoutManager(new LinearLayoutManager(rvTrailers.getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -171,9 +173,12 @@ public class MovieDetailFragment extends Fragment {
 
     }
 
-    public void populateUI(Movie movie) {
-        Picasso.with(getActivity()).load(Constants.BACKDROP_URL + movie.getBackdrop_path())
-                .into(ivBackDrop);
+    public void populateUI() {
+        if (isTwoPlane)
+            Picasso.with(getActivity()).load(Constants.BACKDROP_URL + movie.getBackdrop_path())
+                    .into(ivBackDrop);
+        else
+            ivBackDrop.setVisibility(View.GONE);
 
         //Set Title And Desc
         tvOrgTitle.setText(movie.getOriginal_title());
@@ -185,7 +190,6 @@ public class MovieDetailFragment extends Fragment {
         loadReviews();
 
     }
-
 
     public void watchYoutubeVideo(String id) {
         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));

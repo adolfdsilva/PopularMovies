@@ -3,11 +3,18 @@ package audi.com.popularmovies.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.List;
+
+import audi.com.popularmovies.MovieApplication;
 import audi.com.popularmovies.R;
+import audi.com.popularmovies.model.database.greenbot.DaoSession;
 import audi.com.popularmovies.model.database.greenbot.Movie;
 import audi.com.popularmovies.utils.Constants;
 
@@ -23,32 +30,59 @@ public class MoviesActivity extends BaseActivity implements MovieListFragment.Mo
 
         init();
 
-        if (isTwoPlane) {
-            //set toggle button
-            ((Switch) toolbar.findViewById(R.id.swMovies)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                    if (checked) {
-                        tvTitle.setText(getString(R.string.text_top_movies));
-                        ((MovieListFragment) getSupportFragmentManager().findFragmentById(R.id.fMovieList))
-                                .loadMovies(Constants.TOP_MOVIES);
-                    } else {
-                        tvTitle.setText(getString(R.string.text_pop_movies));
-                        ((MovieListFragment) getSupportFragmentManager().findFragmentById(R.id.fMovieList))
-                                .loadMovies(Constants.POP_MOVIES);
-                    }
+        //set toggle button
+        ((Switch) toolbar.findViewById(R.id.swMovies)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                if (checked) {
+                    tvTitle.setText(getString(R.string.text_top_movies));
+                    ((MovieListFragment) getSupportFragmentManager().findFragmentById(R.id.fMovieList))
+                            .loadMovies(Constants.TOP_MOVIES);
+                } else {
+                    tvTitle.setText(getString(R.string.text_pop_movies));
+                    ((MovieListFragment) getSupportFragmentManager().findFragmentById(R.id.fMovieList))
+                            .loadMovies(Constants.POP_MOVIES);
                 }
-            });
-        }
+            }
+        });
     }
 
     void init() {
         if (findViewById(R.id.fMovieDetail) != null) {
             isTwoPlane = true;
-            setUpToolBar("");
-            tvTitle = (TextView) toolbar.findViewById(R.id.tvTitle);
-            tvTitle.setText(R.string.text_pop_movies);
         }
+        setUpToolBar("");
+        tvTitle = (TextView) toolbar.findViewById(R.id.tvTitle);
+        tvTitle.setText(R.string.text_pop_movies);
+
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.TWO_PLANE, isTwoPlane);
+        Fragment fragment = new MovieListFragment();
+        fragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fMovieList, fragment, MovieListFragment.class.getSimpleName())
+                .commit();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.mainactivity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.listFav) {
+            DaoSession daoSession = MovieApplication.getSession();
+            List<Movie> movies = daoSession.loadAll(Movie.class);
+            if (((MovieListFragment) getSupportFragmentManager().findFragmentById(R.id.fMovieList)).populateMovieList(movies))
+                tvTitle.setText(R.string.text_favorites);
+            else
+                Toast.makeText(this, R.string.toast_no_fav, Toast.LENGTH_LONG).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -57,6 +91,8 @@ public class MoviesActivity extends BaseActivity implements MovieListFragment.Mo
         if (isTwoPlane) {
             Bundle bundle = new Bundle();
             bundle.putParcelable(Constants.MOVIE, movie);
+            bundle.putBoolean(Constants.TWO_PLANE, isTwoPlane);
+
             Fragment fragment = new MovieDetailFragment();
             fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
