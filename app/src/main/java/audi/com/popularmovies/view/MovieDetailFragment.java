@@ -76,11 +76,13 @@ public class MovieDetailFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         init();
+        populateUI(movie);
 
         return rootView;
     }
 
     private void init() {
+        movie = getArguments().getParcelable(Constants.MOVIE);
         queue = Volley.newRequestQueue(getActivity());
         //setup trailer and recycler views
         rvTrailers.setLayoutManager(new LinearLayoutManager(rvTrailers.getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -170,7 +172,6 @@ public class MovieDetailFragment extends Fragment {
     }
 
     public void populateUI(Movie movie) {
-        this.movie = movie;
         Picasso.with(getActivity()).load(Constants.BACKDROP_URL + movie.getBackdrop_path())
                 .into(ivBackDrop);
 

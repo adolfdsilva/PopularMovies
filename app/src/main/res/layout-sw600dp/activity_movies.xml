@@ -48,13 +48,12 @@
             android:layout_weight="1"
             tools:layout="@layout/fragment_movies_list" />
 
-        <fragment
+        <FrameLayout
             android:id="@+id/fMovieDetail"
-            class="audi.com.popularmovies.view.MovieDetailFragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            tools:layout="@layout/fragment_movies_detail" />
+            tools:context=".view.MovieDetailActivity" />
 
     </LinearLayout>
 </LinearLayout>
