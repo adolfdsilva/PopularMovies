@@ -1,6 +1,10 @@
 package audi.com.popularmovies.utils;
 
+import android.content.Context;
+import android.util.DisplayMetrics;
 import android.util.Log;
+
+import audi.com.popularmovies.MovieApplication;
 
 /**
  * Created by Audi on 15/09/16.
@@ -57,4 +61,16 @@ public class Constants {
     }
 
 
+    public static boolean isFavorite(Long movieId) {
+        if (MovieApplication.getSession().getMovieDao().load(movieId) != null)
+            return true;
+        return false;
+    }
+
+    public static double getScreenWidth(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+
+        return dpWidth;
+    }
 }

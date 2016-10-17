@@ -38,6 +38,7 @@ public class MovieDetailActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 MovieApplication.getSession().insertOrReplace(movie);
+                fFavorites.setSelected(true);
             }
         });
     }
@@ -64,6 +65,8 @@ public class MovieDetailActivity extends BaseActivity {
                 (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
         collapsingToolbar.setTitle(movie.getOriginal_title());
         collapsingToolbar.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+
+        fFavorites.setSelected(Constants.isFavorite(movie.getId()));
 
     }
 }

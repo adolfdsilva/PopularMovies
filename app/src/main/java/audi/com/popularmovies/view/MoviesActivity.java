@@ -22,6 +22,9 @@ public class MoviesActivity extends BaseActivity implements MovieListFragment.Mo
 
     private TextView tvTitle;
     private boolean isTwoPlane;
+    private MenuItem fav;
+    private Switch topOrpop;
+    private boolean isFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,18 +34,10 @@ public class MoviesActivity extends BaseActivity implements MovieListFragment.Mo
         init();
 
         //set toggle button
-        ((Switch) toolbar.findViewById(R.id.swMovies)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        topOrpop.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                if (checked) {
-                    tvTitle.setText(getString(R.string.text_top_movies));
-                    ((MovieListFragment) getSupportFragmentManager().findFragmentById(R.id.fMovieList))
-                            .loadMovies(Constants.TOP_MOVIES);
-                } else {
-                    tvTitle.setText(getString(R.string.text_pop_movies));
-                    ((MovieListFragment) getSupportFragmentManager().findFragmentById(R.id.fMovieList))
-                            .loadMovies(Constants.POP_MOVIES);
-                }
+                toggleMovies(checked);
             }
         });
     }
@@ -54,6 +49,7 @@ public class MoviesActivity extends BaseActivity implements MovieListFragment.Mo
         setUpToolBar("");
         tvTitle = (TextView) toolbar.findViewById(R.id.tvTitle);
         tvTitle.setText(R.string.text_pop_movies);
+        topOrpop = ((Switch) toolbar.findViewById(R.id.swMovies));
 
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constants.TWO_PLANE, isTwoPlane);
@@ -67,24 +63,45 @@ public class MoviesActivity extends BaseActivity implements MovieListFragment.Mo
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mainactivity, menu);
+        fav = menu.findItem(R.id.listFav);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.listFav) {
-            DaoSession daoSession = MovieApplication.getSession();
-            List<Movie> movies = daoSession.loadAll(Movie.class);
-            if (((MovieListFragment) getSupportFragmentManager().findFragmentById(R.id.fMovieList)).populateMovieList(movies))
-                tvTitle.setText(R.string.text_favorites);
-            else
-                Toast.makeText(this, R.string.toast_no_fav, Toast.LENGTH_LONG).show();
+        if (item.getItemId() == fav.getItemId()) {
+            if (!isFavorite) {
+                isFavorite = true;
+                DaoSession daoSession = MovieApplication.getSession();
+                List<Movie> movies = daoSession.loadAll(Movie.class);
+                if (((MovieListFragment) getSupportFragmentManager().findFragmentById(R.id.fMovieList)).populateMovieList(movies)) {
+                    tvTitle.setText(R.string.text_favorites);
+                    fav.setIcon(R.drawable.ic_favorite_white_48dp);
+                    fav.setChecked(true);
+                } else
+                    Toast.makeText(this, R.string.toast_no_fav, Toast.LENGTH_LONG).show();
+            } else {
+                isFavorite = false;
+                fav.setIcon(R.drawable.ic_favorite_border_white_48dp);
+                toggleMovies(topOrpop.isChecked());
+            }
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    void toggleMovies(boolean top) {
+        if (top) {
+            tvTitle.setText(getString(R.string.text_top_movies));
+            ((MovieListFragment) getSupportFragmentManager().findFragmentById(R.id.fMovieList))
+                    .loadMovies(Constants.TOP_MOVIES);
+        } else {
+            tvTitle.setText(getString(R.string.text_pop_movies));
+            ((MovieListFragment) getSupportFragmentManager().findFragmentById(R.id.fMovieList))
+                    .loadMovies(Constants.POP_MOVIES);
+        }
+    }
 
     @Override
     public void onMovieSelected(Movie movie) {

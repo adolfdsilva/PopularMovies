@@ -65,7 +65,8 @@ public class MovieListFragment extends Fragment {
     }
 
     private void loadMovieAdapter() {
-        rvMovies.setLayoutManager(new GridLayoutManager(rvMovies.getContext(), isTwoPlane ? 3 : 2));
+        double width = Constants.getScreenWidth(getActivity());
+        rvMovies.setLayoutManager(new GridLayoutManager(rvMovies.getContext(), width >= 720 ? 3 : 2));
         rvMovies.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.HORIZONTAL_LIST));
         adapter = new MoviesRecyclerAdapter(getActivity(), null);
         adapter.setOnItemClickListerner(new MoviesRecyclerAdapter.OnItemClick() {

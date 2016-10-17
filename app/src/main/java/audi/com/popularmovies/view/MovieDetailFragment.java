@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import audi.com.popularmovies.MovieApplication;
 import audi.com.popularmovies.R;
 import audi.com.popularmovies.controller.ReviewsRecyclerAdapter;
 import audi.com.popularmovies.controller.TrailersRecyclerAdapter;
@@ -62,6 +64,9 @@ public class MovieDetailFragment extends Fragment {
     TextView tvReviewText;
     @BindView(R.id.tvTrailers)
     TextView tvTrailerText;
+    @BindView(R.id.fFav)
+    FloatingActionButton fFavorites;
+
 
     Movie movie;
     private boolean isTwoPlane;
@@ -79,6 +84,14 @@ public class MovieDetailFragment extends Fragment {
         init();
         populateUI();
 
+        fFavorites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MovieApplication.getSession().insertOrReplace(movie);
+                fFavorites.setSelected(true);
+            }
+        });
+
         return rootView;
     }
 
@@ -91,6 +104,9 @@ public class MovieDetailFragment extends Fragment {
         rvTrailers.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.HORIZONTAL_LIST));
         rvReviews.setLayoutManager(new LinearLayoutManager(rvTrailers.getContext(), LinearLayoutManager.VERTICAL, false));
         rvReviews.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
+        fFavorites.setVisibility(isTwoPlane ? View.VISIBLE : View.GONE);
+        fFavorites.setSelected(Constants.isFavorite(movie.getId()));
     }
 
     private void loadReviews() {
